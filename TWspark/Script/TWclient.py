@@ -1,5 +1,5 @@
 import tweepy
-
+import json
 
 class TWclient:
     def __init__(self):
@@ -9,6 +9,10 @@ class TWclient:
         self.Access_token_secret = "AmcnpoSL5zAA7fcVD6zDUHKDbeZ96stVzC6HgmAmxdnCh"
 
         self.q = self.get_search_terms()
+        self.authorize()
+
+        self.get_api()
+        self.get_RTstream()
 
     def authorize(self):
         self.auth = tweepy.OAuthHandler(self.Consumer_API_key, self.Consumer_API_secret)
@@ -21,12 +25,24 @@ class TWclient:
         pass
 
     def get_search_terms(self):
-        Tlist = input("Query term(s): ")
+        Tlist = input("Query term(s): ").split()
         return Tlist
 
-    def get_sream(self):
-        self.myStream = tweepy.Stream(auth=self.auth, listener=MyStream())
-        self.myStream.filter(track=[self.q])
+    def get_RTstream(self):
+        self.streamListener = MyStream()
+        self.myStream = tweepy.Stream(auth=self.api.auth, listener=self.streamListener)
+
+        try:
+            print("start streaming")
+            #self.myStream.sample(languages=['en'])
+            self.myStream.filter(track=self.q, languages=["en"])
+
+        except KeyboardInterrupt:
+            print("stopping")
+
+        finally:
+            self.myStream.disconnect()
+            print("disconnected")
 
     def send_to_spark(self):
         pass
@@ -34,29 +50,22 @@ class TWclient:
 class MyStream(tweepy.StreamListener):
     def __init__(self):
         super().__init__()
-        self.counter = 0
-        self.limit = 10
-
+    """
+    def on_data(self, data):
+        tweet = json.loads(data)
+        print(tweet)
+    """
     def on_status(self, status):
         print(status.text)
 
-        self.counter += 1
-        if self.counter < self.limit:
-            return True
-        else:
-            return False
-
     def on_error(self, status_code):
-            if status_code == 420:
-                # returning False in on_error disconnects the stream
-                print(status_code)
-                return True
+        # returning False in on_error disconnects the stream
+        print(status_code)
+        return True
 
 
 def main():
     foo = TWclient()
-    foo.authorize()
-    foo.get_sream()
 
 
 if __name__ == "__main__":
