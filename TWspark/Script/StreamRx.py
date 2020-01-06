@@ -10,15 +10,20 @@ def get_stream():
     port = 5555
     lines = ssc.socketTextStream(host, port)
 
-    words = lines.flatMap(lambda line: line.split(" "))
-    pairs = words.map(lambda word: (word, 1))
-    count = pairs.reduceByKey(lambda x, y: x+y)
-    count.pprint()
+    test(lines)
 
     """format data into df + ml on it"""
 
     ssc.start()
     ssc.awaitTermination()
+
+
+def test(lines):
+    """wcount in tweets"""
+    words = lines.flatMap(lambda line: line.split(" "))
+    pairs = words.map(lambda word: (word, 1))
+    count = pairs.reduceByKey(lambda x, y: x+y)
+    count.pprint()
 
 
 if __name__ == "__main__":
