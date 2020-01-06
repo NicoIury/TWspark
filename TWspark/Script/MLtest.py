@@ -11,7 +11,7 @@ from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClass
 INPUT_DATA = "/home/nico/Nico/pyProg/projData/training.1600000.processed.noemoticon.csv"
 
 
-def main():
+def model_gen():
 
     spark = SparkSession.builder.appName("p1").getOrCreate()
     df_schema = StructType([StructField("target", IntegerType(), True),
@@ -59,7 +59,7 @@ def main():
     pred = model.transform(test_df)
     pred.show()
 
-    # eval:
+    """model evaluation section"""
 
     """
     # lr:
@@ -77,7 +77,11 @@ def main():
     print(eval.evaluate(pred))
 
 
+def save_model():
+    pass
+
+
 if __name__ == "__main__":
-    main()
+    model_gen()
 
 

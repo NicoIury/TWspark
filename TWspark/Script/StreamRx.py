@@ -4,7 +4,6 @@ from pyspark.sql.types import StructType, StructField, StringType
 from pyspark.sql import SparkSession
 
 SCHEMA = StructType([StructField("text", StringType(), True)])
-
 spark = SparkSession.builder.getOrCreate()
 
 
