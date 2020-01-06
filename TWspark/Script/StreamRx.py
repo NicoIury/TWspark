@@ -18,8 +18,6 @@ def catch_stream():
     lines.foreachRDD(to_df)
     #test(lines)
 
-    """format data into df + ml on it"""
-
     ssc.start()
     ssc.awaitTermination()
 
