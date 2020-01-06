@@ -1,16 +1,22 @@
-from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
-from pyspark.sql import *
+
+from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql import SparkSession
+
+SCHEMA = StructType([StructField("text", StringType(), True)])
+
+spark = SparkSession.builder.getOrCreate()
 
 
-def get_stream():
-    sc = SparkContext()
-    ssc = StreamingContext(sc, 10)
+def catch_stream():
+
+    ssc = StreamingContext(spark.sparkContext, 10)
     host = "localhost"
     port = 5555
     lines = ssc.socketTextStream(host, port)
 
-    test(lines)
+    lines.foreachRDD(to_df)
+    #test(lines)
 
     """format data into df + ml on it"""
 
@@ -26,5 +32,15 @@ def test(lines):
     count.pprint()
 
 
+def to_df(rdd):
+    df = spark.createDataFrame(rdd.map(lambda x: (x, )), schema=SCHEMA)
+    df.show()
+    #apply_model(df)
+
+
+def apply_model(df):
+    pass
+
+
 if __name__ == "__main__":
-    get_stream()
+    catch_stream()
