@@ -73,9 +73,9 @@ class MyStream(tweepy.StreamListener):
 
     def on_data(self, data):
         tweet = json.loads(data)
-        #clean tweet text here
+        # clean tweet text here
         self.sock.send(tweet["text"].encode('utf-8'))
-        #print(tweet)
+        # print(tweet)
         time.sleep(3)
 
     """
