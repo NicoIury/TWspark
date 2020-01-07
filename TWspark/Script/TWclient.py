@@ -3,6 +3,7 @@ import json
 import time
 import socket
 
+
 class TWclient:
     def __init__(self):
         self.Consumer_API_key = "smkfHwJ7ALgAkrlQIwhjJuOr7"
@@ -15,7 +16,7 @@ class TWclient:
 
         self.get_api()
         self.get_RTstream()
-        #self.get_search()
+        # self.get_search()
 
     def authorize(self):
         self.auth = tweepy.OAuthHandler(self.Consumer_API_key, self.Consumer_API_secret)
@@ -63,7 +64,6 @@ class TWclient:
 
         for tw in self.tweets:
             print(tw.text)
-
 
 
 class MyStream(tweepy.StreamListener):
