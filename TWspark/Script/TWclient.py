@@ -2,6 +2,8 @@ import tweepy
 import json
 import time
 import socket
+import re
+import string
 
 
 class TWclient:
@@ -73,10 +75,11 @@ class MyStream(tweepy.StreamListener):
 
     def on_data(self, data):
         tweet = json.loads(data)
-        # clean tweet text here
-        self.sock.send(tweet["text"].encode('utf-8'))
-        # print(tweet)
-        time.sleep(3)
+        tweet["text"] = full_clean(tweet["text"])
+        print(tweet["text"])
+        if tweet["text"]:
+            self.sock.send(tweet["text"].encode('utf-8'))
+        # time.sleep(3)
 
     """
     def on_status(self, status):
@@ -104,6 +107,15 @@ def create_connection():
 
     print("address rx: {}".format(str(address)))
     return n_sock
+
+
+def full_clean(text):
+    text = "".join([char for char in text if char not in string.punctuation])
+    text = re.sub("[0-9]+", "", text)
+    text = re.sub("^RT", "", text)
+    text = re.sub("@", "", text)
+    text = re.sub("http.\S+", "", text)
+    return text
 
 
 def main():
