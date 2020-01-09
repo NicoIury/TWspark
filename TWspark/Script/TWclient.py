@@ -76,7 +76,7 @@ class MyStream(tweepy.StreamListener):
     def on_data(self, data):
         tweet = json.loads(data)
         tweet["text"] = full_clean(tweet["text"])
-        print(tweet["text"])
+        # print(tweet["text"])
         if tweet["text"]:
             self.sock.send(tweet["text"].encode('utf-8'))
         # time.sleep(3)
@@ -115,6 +115,7 @@ def full_clean(text):
     text = re.sub("^RT", "", text)
     text = re.sub("@", "", text)
     text = re.sub("http.\S+", "", text)
+    text = text.lower()
     return text
 
 

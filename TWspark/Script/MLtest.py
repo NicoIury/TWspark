@@ -8,12 +8,11 @@ from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClass
 
 from os import path
 
-
-INPUT_DATA = "/home/nico/Nico/pyProg/projData/training.1600000.processed.noemoticon.csv"
 MODEL_PATH = "/home/nico/Nico/pyProg/Big_data_2p/TWspark/model"
+INPUT_FOLDER = "/home/nico/Nico/pyProg/projData/"
 
 
-def model_gen():
+def create_df(df_name="training.1600000.processed.noemoticon.csv"):
     spark = SparkSession.builder.appName("p1").getOrCreate()
     df_schema = StructType([StructField("target", IntegerType(), True),
                             StructField("id",  IntegerType(), True),
@@ -27,14 +26,16 @@ def model_gen():
         .option("header", "false")\
         .schema(df_schema)\
         .option("delimiter", ",")\
-        .load(INPUT_DATA)
+        .load(path.join(INPUT_FOLDER, df_name))
 
-    # pulire dati dal df aka: encoding html tag (bs?), eliminare @, eliminare url e set tutto minusc
+    return df
+
+
+def model_gen():
+    # df = create_df() # using dirty dataset
+    df = create_df(path.join(INPUT_FOLDER, "cleaned_df.csv")) # using cleaned dataset
 
     df = df.drop("id", "date", "flag", "user")
-
-    """clean dataFrame"""
-    # clean_df(df)
 
     # df split: training (90%), test (10%)
     (training_df, test_df) = df.randomSplit([0.90, 0.10])
@@ -89,10 +90,6 @@ def eval_prediction(pred):
                                              predictionCol="prediction",
                                              metricName="f1")
     print(eval.evaluate(pred))
-
-
-def clean_df(df):
-    pass
 
 
 if __name__ == "__main__":
