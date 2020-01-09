@@ -119,9 +119,9 @@ def full_clean(text):
     return text
 
 
-def main():
+def run():
     foo = TWclient()
 
 
-if __name__ == "__main__":
-    main()
+if __name__=="__main__":
+    run()
