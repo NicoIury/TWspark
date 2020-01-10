@@ -1,26 +1,36 @@
 import matplotlib.pyplot as plt
-import time
+import matplotlib.animation as anim
 
-""""
-def plot_data(data):
-    plt.figure()
-    ln, = plt.plot([])
-    plt.ion()
+
+class dashboard:
+    def __init__(self):
+        self.PRED_FILE = "/home/nico/Nico/pyProg/projData/PredList"
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(1, 1, 1)
+
+    def update(self, i):
+        self.y = []
+
+        raw_data = open(self.PRED_FILE, "r").read().split("\n")
+        for line in raw_data:
+            try:
+                self.y.append(float(line.replace("\n", "")))
+            except ValueError:
+                pass
+
+        self.x = list(range(len(self.y)))
+
+        print(self.x, self.y)
+        self.ax.plot(self.x, self.y) #esce de capa
+
+    def animate(self):
+        self.a = anim.FuncAnimation(self.fig, self.update, interval=1000)
+
+
+def run():
+    foo = dashboard()
+    foo.animate()
     plt.show()
-    while True:
-        plt.pause(1)
-        ln.set_xdata(range(len(data)))
-        ln.set_ydata(data)
-        plt.draw()
-"""
 
 
-def run(q):
-    while 1:
-        if q:
-            test = q.get()
-            print(test)
-            # plot_data(test)
-
-
-
+run()

@@ -7,11 +7,8 @@ from pyspark.sql import SparkSession
 from pyspark.ml import PipelineModel
 
 import MLtest
-import dashboard
 
-from os import path
-import multiprocessing
-import time
+import os
 
 
 def catch_stream():
@@ -48,15 +45,25 @@ def apply_model(df):
 
 
 def extract_prediction(pred_df):
+    """
     [QUEUE.put(float(pred.prediction)) for pred in pred_df.collect()]
-    time.sleep(1)
+    """
+    with open(PRED_FILE, "a") as f:
+        [f.write(str(pred.prediction)+"\n") for pred in pred_df.collect()]
 
+
+PRED_FILE = "/home/nico/Nico/pyProg/projData/PredList"
+if os.path.exists(PRED_FILE):
+    os.remove(PRED_FILE)
+    open(PRED_FILE, "a").close()
 
 SCHEMA = StructType([StructField("text", StringType(), True)])
 spark = SparkSession.builder.getOrCreate()
+sentiment_model = PipelineModel.load(os.path.join(MLtest.MODEL_PATH, "pipe_model"))
 
-sentiment_model = PipelineModel.load(path.join(MLtest.MODEL_PATH, "pipe_model"))
+catch_stream()
 
+"""
 QUEUE = multiprocessing.Queue()
 
 pr1 = multiprocessing.Process(target=catch_stream)
@@ -66,3 +73,4 @@ pr2.start()
 
 pr1.join()
 pr2.join()
+"""
