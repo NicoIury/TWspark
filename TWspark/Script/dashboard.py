@@ -1,12 +1,19 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
+import matplotlib.gridspec as gridspec
+
+from wordcloud import WordCloud
+
+import re
 
 
 class dashboard:
     def __init__(self):
         self.PRED_FILE = "/home/nico/Nico/pyProg/projData/PredList"
-        self.fig = plt.figure()
-        self.ax = self.fig.add_subplot(1, 1, 1)
+        self.TEXT_FILE = "/home/nico/Nico/pyProg/projData/TextList"
+        self.gs = gridspec.GridSpec(2, 2)
+        self.fig = plt.figure(figsize=(10, 10))
+        self.ax = plt.subplot(self.gs[0, 0])
 
     def update(self, i):
         # self.y = []
@@ -25,11 +32,10 @@ class dashboard:
         value = [(len(pos_op)), (len(neg_op))]
         self.ax.clear()
         self.ax.pie(value, labels=["positive", "negative"], colors=["yellow", "green"], autopct='%1.1f%%',
-                    explode=(0, 0.1), shadow=True, startangle=140)
+                    explode=(0, 0.1), shadow=True, startangle=140, radius=1)
 
         """hashtag wordcloud"""
-
-
+        self.show_wordcloud()
         """linear plot"""
         """
         self.x = list(range(len(self.y)))
@@ -41,10 +47,30 @@ class dashboard:
     def animate(self):
         self.a = anim.FuncAnimation(self.fig, self.update, interval=100, repeat=False)
 
+    def get_hashtag(self):
+        raw_data = open(self.TEXT_FILE, "r").read()
+        self.hashtag = ""
+        for word in re.findall("#\w+", raw_data):
+            self.hashtag += " " + word
+
+        print(self.hashtag)
+
+    def show_wordcloud(self):
+        self.get_hashtag()
+        self.ax2 = plt.subplot(self.gs[0, 1])
+        wc = WordCloud(
+            width=1000,
+            height=1000,
+            max_words=200,
+            scale=3
+        ).generate(self.hashtag)
+        self.ax2.imshow(wc)
+
 
 def run():
     foo = dashboard()
     foo.animate()
+    # foo.show_wordcloud()
     plt.show()
 
 
