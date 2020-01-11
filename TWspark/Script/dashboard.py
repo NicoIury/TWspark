@@ -26,6 +26,10 @@ class dashboard:
         self.ax.clear()
         self.ax.pie(value, labels=["positive", "negative"], colors=["yellow", "green"], autopct='%1.1f%%',
                     explode=(0, 0.1), shadow=True, startangle=140)
+
+        """hashtag wordcloud"""
+
+
         """linear plot"""
         """
         self.x = list(range(len(self.y)))

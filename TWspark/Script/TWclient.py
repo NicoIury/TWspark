@@ -75,6 +75,7 @@ class MyStream(tweepy.StreamListener):
 
     def on_data(self, data):
         tweet = json.loads(data)
+        print(tweet["text"])
         tweet["text"] = full_clean(tweet["text"])
         # print(tweet["text"])
         if tweet["text"]:
@@ -110,10 +111,10 @@ def create_connection():
 
 
 def full_clean(text):
-    text = "".join([char for char in text if char not in string.punctuation])
-    text = re.sub("[0-9]+", "", text)
+    punctList = string.punctuation.replace("#", "")
+    text = "".join([char for char in text if char not in punctList])
     text = re.sub("^RT", "", text)
-    text = re.sub("@", "", text)
+    text = re.sub("@[^\s]+", "", text)
     text = re.sub("http.\S+", "", text)
     text = text.lower()
     return text

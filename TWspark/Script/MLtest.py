@@ -60,6 +60,8 @@ def model_gen():
     pipeline = Pipeline(stages=[tokenizer, hashing, idf, target_to_label, nb])
     model = pipeline.fit(training_df)
 
+    print("[+] pipeline model has been generated")
+
     """prediction on test dataset"""
     pred = model.transform(test_df)
     # pred.show()
@@ -83,13 +85,14 @@ def model_gen():
 
 def save_model(model):
     model.save(path.join(MODEL_PATH, "pipe_model"))
+    print("[+] model saved at: " + MODEL_PATH)
 
 
 def eval_prediction(pred):
     eval = MulticlassClassificationEvaluator(labelCol="label",
                                              predictionCol="prediction",
                                              metricName="f1")
-    print(eval.evaluate(pred))
+    print("[+] model evaluation (MulticlassClassification): " + str(eval.evaluate(pred)))
 
 
 if __name__ == "__main__":

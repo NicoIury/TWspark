@@ -41,21 +41,30 @@ def to_df(rdd):
 def apply_model(df):
     pred = sentiment_model.transform(df)
     # pred.show()
-    extract_prediction(pred)
+    extract_data(pred)
 
 
-def extract_prediction(pred_df):
+def extract_data(pred_df):
     """
     [QUEUE.put(float(pred.prediction)) for pred in pred_df.collect()]
     """
     with open(PRED_FILE, "a") as f:
         [f.write(str(pred.prediction)+"\n") for pred in pred_df.collect()]
 
+    with open(TEXT_FILE, "a") as g:
+        [g.write(str(text.text)) for text in pred_df.collect()]
 
+
+def refresh_file(path):
+    if os.path.exists(path):
+        os.remove(path)
+        open(path, "a").close()
+
+
+TEXT_FILE = "/home/nico/Nico/pyProg/projData/TextList"
 PRED_FILE = "/home/nico/Nico/pyProg/projData/PredList"
-if os.path.exists(PRED_FILE):
-    os.remove(PRED_FILE)
-    open(PRED_FILE, "a").close()
+refresh_file(TEXT_FILE)
+refresh_file(PRED_FILE)
 
 SCHEMA = StructType([StructField("text", StringType(), True)])
 spark = SparkSession.builder.getOrCreate()

@@ -10,13 +10,14 @@ def blank_as_null(x):
 
 
 def clean_df(df):
-    regex = r"((https|http)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*\b)" \
-            r"|([^A-Za-z0-9 '!?.:,;ìàòèéù])"
+    regex = r"(http.\S+)|(@[^\s]+)"
+    df = df.withColumn("text", f.lower(f.col("text")))
     df = df.withColumn("text", f.regexp_replace(f.col("text"), regex, ''))
     df = df.withColumn("text", blank_as_null("text"))
     df.na.drop()
-    df = df.withColumn("text", f.lower(f.col("text")))
+
     df.write.csv(path.join(MLtest.INPUT_FOLDER, "cleaned_df.csv"), mode="overwrite")
+    print("[+] cleaning complete")
 
 
 if __name__ == "__main__":
