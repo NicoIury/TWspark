@@ -75,7 +75,7 @@ class MyStream(tweepy.StreamListener):
 
     def on_data(self, data):
         tweet = json.loads(data)
-        print(tweet["text"])
+        # print(tweet["text"])
         tweet["text"] = full_clean(tweet["text"])
         # print(tweet["text"])
         if tweet["text"]:

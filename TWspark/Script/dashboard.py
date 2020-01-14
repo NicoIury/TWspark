@@ -4,12 +4,13 @@ import matplotlib.gridspec as gridspec
 
 from wordcloud import WordCloud
 
-import re
+import re 
+import csv
 
 
 class dashboard:
     def __init__(self):
-        self.PRED_FILE = "/home/nico/Nico/pyProg/projData/PredList"
+        self.DATASET_FILE = "/home/nico/Nico/pyProg/projData/dataset"
         self.TEXT_FILE = "/home/nico/Nico/pyProg/projData/TextList"
         self.gs = gridspec.GridSpec(2, 2)
         self.fig = plt.figure(figsize=(10, 10))
@@ -19,16 +20,18 @@ class dashboard:
         # self.y = []
         neg_op = []
         pos_op = []
-        raw_data = open(self.PRED_FILE, "r").read().split("\n")
-        for line in raw_data:
-            try:
-                tmp = (float(line.replace("\n", "")))
-                if tmp > 0.0: # positive
-                    pos_op.append(tmp)
-                if tmp < 1.0: # negative
-                    neg_op.append(tmp)
-            except ValueError:
-                pass
+        with open(self.DATASET_FILE, "r") as raw_data:
+            reader = csv.reader(raw_data, delimiter=",")
+            for line in reader:
+                try:
+                    tmp = float(line[1])
+                    if tmp > 0.0:  # positive
+                        pos_op.append(tmp)
+                    if tmp < 1.0:  # negative
+                        neg_op.append(tmp)
+                except ValueError:
+                    pass
+
         value = [(len(pos_op)), (len(neg_op))]
         self.ax.clear()
         self.ax.pie(value, labels=["positive", "negative"], colors=["yellow", "green"], autopct='%1.1f%%',
@@ -48,12 +51,14 @@ class dashboard:
         self.a = anim.FuncAnimation(self.fig, self.update, interval=100, repeat=False)
 
     def get_hashtag(self):
-        raw_data = open(self.TEXT_FILE, "r").read()
         self.hashtag = ""
-        for word in re.findall("#\w+", raw_data):
-            self.hashtag += " " + word
+        with open(self.TEXT_FILE, "r") as raw_data:
+            reader = csv.reader(raw_data, delimiter=",")
+            for line in reader:
+                for word in re.findall("#\w+", line[0]):
+                    self.hashtag += " " + word
 
-        print(self.hashtag)
+        # print(self.hashtag)
 
     def show_wordcloud(self):
         self.get_hashtag()
@@ -70,7 +75,6 @@ class dashboard:
 def run():
     foo = dashboard()
     foo.animate()
-    # foo.show_wordcloud()
     plt.show()
 
 

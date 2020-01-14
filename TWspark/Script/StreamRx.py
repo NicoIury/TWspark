@@ -9,6 +9,7 @@ from pyspark.ml import PipelineModel
 import MLtest
 
 import os
+import csv
 
 
 def catch_stream():
@@ -47,12 +48,17 @@ def apply_model(df):
 def extract_data(pred_df):
     """
     [QUEUE.put(float(pred.prediction)) for pred in pred_df.collect()]
-    """
+
     with open(PRED_FILE, "a") as f:
         [f.write(str(pred.prediction)+"\n") for pred in pred_df.collect()]
 
     with open(TEXT_FILE, "a") as g:
         [g.write(str(text.text)) for text in pred_df.collect()]
+    """
+    with open(DATASET_FILE, "a") as f:
+        for row in pred_df.collect():
+            wr = csv.writer(f)
+            wr.writerow([row.text, row.prediction])
 
 
 def refresh_file(path):
@@ -60,11 +66,14 @@ def refresh_file(path):
         os.remove(path)
         open(path, "a").close()
 
-
+"""
 TEXT_FILE = "/home/nico/Nico/pyProg/projData/TextList"
 PRED_FILE = "/home/nico/Nico/pyProg/projData/PredList"
 refresh_file(TEXT_FILE)
 refresh_file(PRED_FILE)
+"""
+DATASET_FILE = "/home/nico/Nico/pyProg/projData/dataset"
+refresh_file(DATASET_FILE)
 
 SCHEMA = StructType([StructField("text", StringType(), True)])
 spark = SparkSession.builder.getOrCreate()
