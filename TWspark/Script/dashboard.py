@@ -4,17 +4,18 @@ import matplotlib.gridspec as gridspec
 
 from wordcloud import WordCloud
 
-import re 
+import re
 import csv
 
 
 class dashboard:
     def __init__(self):
         self.DATASET_FILE = "/home/nico/Nico/pyProg/projData/dataset"
-        self.TEXT_FILE = "/home/nico/Nico/pyProg/projData/TextList"
         self.gs = gridspec.GridSpec(2, 2)
         self.fig = plt.figure(figsize=(10, 10))
+
         self.ax = plt.subplot(self.gs[0, 0])
+        self.ax2 = plt.subplot(self.gs[0, 1])
 
     def update(self, i):
         # self.y = []
@@ -52,7 +53,7 @@ class dashboard:
 
     def get_hashtag(self):
         self.hashtag = ""
-        with open(self.TEXT_FILE, "r") as raw_data:
+        with open(self.DATASET_FILE, "r") as raw_data:
             reader = csv.reader(raw_data, delimiter=",")
             for line in reader:
                 for word in re.findall("#\w+", line[0]):
@@ -62,7 +63,6 @@ class dashboard:
 
     def show_wordcloud(self):
         self.get_hashtag()
-        self.ax2 = plt.subplot(self.gs[0, 1])
         wc = WordCloud(
             width=1000,
             height=1000,
