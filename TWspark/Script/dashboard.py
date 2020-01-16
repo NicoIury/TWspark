@@ -24,10 +24,12 @@ class dashboard:
         self.ax3 = plt.subplot(self.gs[1, :])
 
     def update(self, i):
-        """chart rendering section"""
+        """chart update section"""
         self.pie_chart()
 
         self.get_hashtag()
+        self.get_popular_hashtag()
+
         self.show_wordcloud()
 
         self.show_histogram()
@@ -36,23 +38,33 @@ class dashboard:
         self.a = anim.FuncAnimation(self.fig, self.update, interval=100, repeat=False)
 
     def get_hashtag(self):
-        self.hashtag = ""
+        self.hashtag = []
         with open(self.DATASET_FILE, "r") as raw_data:
             reader = csv.reader(raw_data, delimiter=",")
             for line in reader:
                 for word in re.findall("#\w+", line[0]):
                     # add if not in self.hashtag.split()
-                    self.hashtag += " " + word
+                    self.hashtag.append(word)
 
-        # print(self.hashtag)
+    def get_popular_hashtag(self):
+        all_hashtag = dict.fromkeys(self.hashtag, 0)
+        self.popular_hashtag = []
+        for word in self.hashtag:
+            all_hashtag[word] += 1
+        for item in (sorted(all_hashtag.items(), key=lambda x: x[1], reverse=True)):
+            self.popular_hashtag.append(item[0])
 
     def show_wordcloud(self):
+        hashtag_as_string = ""
+        for word in self.popular_hashtag[:100]:
+            hashtag_as_string += word + " "
+
         wc = WordCloud(
             width=1000,
             height=1000,
             max_words=200,
             scale=3
-        ).generate(self.hashtag)
+        ).generate(hashtag_as_string)
         self.ax2.imshow(wc)
 
     def pie_chart(self):
@@ -78,8 +90,8 @@ class dashboard:
                     explode=(0, 0.1), shadow=True, startangle=140, radius=1)
 
     def show_histogram(self):
-        neg_dict = dict.fromkeys(self.hashtag.split(), 0)
-        pos_dict = dict.fromkeys(self.hashtag.split(), 0)
+        neg_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
+        pos_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
         x = range(0, len(neg_dict.keys()))
         x1 = [i + 0.6 for i in x]
         with open(self.DATASET_FILE, "r") as raw_data:

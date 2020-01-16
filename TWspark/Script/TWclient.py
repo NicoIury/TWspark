@@ -111,12 +111,14 @@ def create_connection():
 
 
 def full_clean(text):
+    """move to RX + spark"""
     punctList = string.punctuation.replace("#", "")
     text = "".join([char for char in text if char not in punctList])
     text = re.sub("^RT", "", text)
     text = re.sub("@[^\s]+", "", text)
     text = re.sub("http.\S+", "", text)
     text = text.lower()
+    """drop empty row"""
     return text
 
 
