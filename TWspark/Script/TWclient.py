@@ -78,7 +78,7 @@ class MyStream(tweepy.StreamListener):
         # print(tweet["text"])
         tweet["text"] = full_clean(tweet["text"])
         # print(tweet["text"])
-        if tweet["text"]:
+        if tweet["text"].strip():
             self.sock.send(tweet["text"].encode('utf-8'))
         # time.sleep(3)
 
