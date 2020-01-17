@@ -33,7 +33,7 @@ def create_df(df_name="training.1600000.processed.noemoticon.csv"):
 
 def model_gen():
     # df = create_df() # using dirty dataset
-    df = create_df(path.join(INPUT_FOLDER, "cleaned_df.csv")) # using cleaned dataset
+    df = create_df(path.join(INPUT_FOLDER, "cleaned_df.csv"))  # using cleaned dataset
 
     df = df.drop("id", "date", "flag", "user")
 

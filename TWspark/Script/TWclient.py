@@ -2,8 +2,8 @@ import tweepy
 import json
 import time
 import socket
-import re
 import string
+import os
 
 
 class TWclient:
@@ -13,12 +13,17 @@ class TWclient:
         self.Access_token = "1213382571528089600-BSEAEcCeWi91Ig5CJnPvd7wTaUanyr"
         self.Access_token_secret = "AmcnpoSL5zAA7fcVD6zDUHKDbeZ96stVzC6HgmAmxdnCh"
 
-        self.q = self.get_search_terms()
-        self.authorize()
+        self.JSON_FILE = "/home/nico/Nico/pyProg/projData/data.json"
 
+        self.q, mode = self.get_input()
+
+        self.authorize()
         self.get_api()
-        self.get_RTstream()
-        # self.get_search()
+
+        if mode == 0:
+            self.get_RTstream()
+        elif mode == 1:
+            self.get_search()
 
     def authorize(self):
         self.auth = tweepy.OAuthHandler(self.Consumer_API_key, self.Consumer_API_secret)
@@ -30,9 +35,17 @@ class TWclient:
     def verify_credential(self):
         pass
 
-    def get_search_terms(self):
+    def get_input(self):
+        while 1:
+            try:
+                mode = int(input("Execute query on real time tweets (0) or historical tweets (1) ?: "))
+                if mode in [0, 1]:
+                    break
+            except ValueError:
+                print("invalid argument")
+
         Tlist = input("Query term(s): ").split()
-        return Tlist
+        return Tlist, mode
 
     def get_RTstream(self):
         self.streamListener = MyStream()
@@ -51,6 +64,8 @@ class TWclient:
             print("disconnected")
 
     def get_search(self, max_tweets=1000):
+        self.clean_json()
+
         self.tweets = []
         last_id = -1
         while len(self.tweets) < max_tweets:
@@ -65,7 +80,23 @@ class TWclient:
                 time.sleep(10)
 
         for tw in self.tweets:
-            print(tw.text)
+            self.build_json(tw)
+
+    def build_json(self, tw):
+        hashatag_list = []
+        [hashatag_list.append(item["text"]) for item in tw.entities["hashtags"]]
+        data = {
+            "text": tw.text,
+            "hashtag_list": hashatag_list,  # filter out empty list
+            "time": tw.created_at  # yyyy-mm-dd hh-mm-ss
+        }
+
+        with open(self.JSON_FILE, 'a') as f:
+            json.dump(data, f, ensure_ascii=False, default=str)  # time not serializable
+
+    def clean_json(self):
+        if os.path.exists(self.JSON_FILE):
+            os.remove(self.JSON_FILE)
 
 
 class MyStream(tweepy.StreamListener):
@@ -76,7 +107,7 @@ class MyStream(tweepy.StreamListener):
     def on_data(self, data):
         tweet = json.loads(data)
         # print(tweet["text"])
-        tweet["text"] = full_clean(tweet["text"])
+        tweet["text"] = clean_punct(tweet["text"])
         # print(tweet["text"])
         if tweet["text"].strip():
             self.sock.send(tweet["text"].encode('utf-8'))
@@ -110,15 +141,9 @@ def create_connection():
     return n_sock
 
 
-def full_clean(text):
-    """move to RX + spark"""
-    punctList = string.punctuation.replace("#", "")
+def clean_punct(text):
+    punctList = string.punctuation.replace("#", "").replace("@", "")
     text = "".join([char for char in text if char not in punctList])
-    text = re.sub("^RT", "", text)
-    text = re.sub("@[^\s]+", "", text)
-    text = re.sub("http.\S+", "", text)
-    text = text.lower()
-    """drop empty row"""
     return text
 
 

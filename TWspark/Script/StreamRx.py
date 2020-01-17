@@ -1,6 +1,7 @@
 from pyspark.streaming import StreamingContext
 
 from pyspark.sql.types import StructType, StructField, StringType
+import pyspark.sql.functions as f
 from pyspark.sql import SparkSession
 
 
@@ -10,6 +11,7 @@ import MLtest
 
 import os
 import csv
+import string
 
 
 def catch_stream():
@@ -36,12 +38,21 @@ def test(lines):
 def to_df(rdd):
     df = spark.createDataFrame(rdd.map(lambda x: (x, )), schema=SCHEMA)
     # df.show()
+    df = clean_df(df)
     apply_model(df)
+
+
+def clean_df(df):
+    df = df.withColumn("text", f.regexp_replace(f.col("text"), "(^RT)|(@[^\s]+)|(http.\S+)", ""))
+    df = df.withColumn("text", f.trim(f.col("text")))
+    df = df.filter(df.text.isNotNull() & (df.text != ""))
+    df = df.withColumn("text", f.lower(f.col("text")))
+    return df
 
 
 def apply_model(df):
     pred = sentiment_model.transform(df)
-    # pred.show()
+    pred.show()
     extract_data(pred)
 
 
