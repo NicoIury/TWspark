@@ -92,7 +92,7 @@ def eval_prediction(pred):
     eval = MulticlassClassificationEvaluator(labelCol="label",
                                              predictionCol="prediction",
                                              metricName="f1")
-    print("[+] model evaluation (MulticlassClassification): " + str(eval.evaluate(pred)))
+    print("[!] model evaluation (MulticlassClassification): " + str(eval.evaluate(pred)))
 
 
 if __name__ == "__main__":

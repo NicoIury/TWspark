@@ -23,7 +23,7 @@ class TWclient:
         if mode == 0:
             self.get_RTstream()
         elif mode == 1:
-            self.get_search()
+            self.get_search()  # no param -> 1000 tw
 
     def authorize(self):
         self.auth = tweepy.OAuthHandler(self.Consumer_API_key, self.Consumer_API_secret)
@@ -38,13 +38,13 @@ class TWclient:
     def get_input(self):
         while 1:
             try:
-                mode = int(input("Execute query on real time tweets (0) or historical tweets (1) ?: "))
+                mode = int(input("[.] Execute query on real time tweets (0) or historical tweets (1) ?: "))
                 if mode in [0, 1]:
                     break
             except ValueError:
-                print("invalid argument")
+                print("[-] invalid argument")
 
-        Tlist = input("Query term(s): ").split()
+        Tlist = input("[.] Query term(s): ").split()
         return Tlist, mode
 
     def get_RTstream(self):
@@ -52,18 +52,19 @@ class TWclient:
         self.myStream = tweepy.Stream(auth=self.api.auth, listener=self.streamListener)
 
         try:
-            print("start streaming")
-            #self.myStream.sample(languages=['en'])
+            print("[*] start streaming...")
+            # self.myStream.sample(languages=['en'])
             self.myStream.filter(track=self.q, languages=["en"])
 
-        except KeyboardInterrupt:
-            print("stopping")
+        except (KeyboardInterrupt, Exception) as e:
+            print("[!] stopping: " + str(e))
 
         finally:
             self.myStream.disconnect()
-            print("disconnected")
+            print("[+] disconnected.")
 
     def get_search(self, max_tweets=1000):
+        print("[*] starting tweets' search...")
         self.clean_json()
 
         self.tweets = []
@@ -79,20 +80,32 @@ class TWclient:
             except tweepy.TweepError:
                 time.sleep(10)
 
+        self.build_json()
+
+        print("[+] data saved in: " + self.JSON_FILE)
+
+    def build_json(self):
+        first = 0
+        with open(self.JSON_FILE, "a") as f:
+            f.write("[")
         for tw in self.tweets:
-            self.build_json(tw)
+            hashatag_list = []
+            [hashatag_list.append(item["text"]) for item in tw.entities["hashtags"]]
+            data = {
+                "text": tw.text,
+                "hashtag_list": hashatag_list,  # filter out empty list
+                "time": tw.created_at  # yyyy-mm-dd hh-mm-ss
+            }
 
-    def build_json(self, tw):
-        hashatag_list = []
-        [hashatag_list.append(item["text"]) for item in tw.entities["hashtags"]]
-        data = {
-            "text": tw.text,
-            "hashtag_list": hashatag_list,  # filter out empty list
-            "time": tw.created_at  # yyyy-mm-dd hh-mm-ss
-        }
+            with open(self.JSON_FILE, 'a') as f:
+                if first != 0:
+                    f.write(",")
+                json.dump(data, f, ensure_ascii=False, default=str)  # time not serializable
 
-        with open(self.JSON_FILE, 'a') as f:
-            json.dump(data, f, ensure_ascii=False, default=str)  # time not serializable
+            first = 1
+
+        with open(self.JSON_FILE, "a") as f:
+            f.write("]")
 
     def clean_json(self):
         if os.path.exists(self.JSON_FILE):
@@ -119,7 +132,6 @@ class MyStream(tweepy.StreamListener):
     """
 
     def on_error(self, status_code):
-        # returning False in on_error disconnects the stream
         print(status_code)
         return True
 

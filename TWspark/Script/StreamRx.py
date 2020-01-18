@@ -11,13 +11,13 @@ import MLtest
 
 import os
 import csv
-import string
 
 
 def catch_stream():
     ssc = StreamingContext(spark.sparkContext, 10)
     host = "localhost"
     port = 5555
+
     lines = ssc.socketTextStream(host, port)
 
     lines.foreachRDD(to_df)
@@ -52,7 +52,7 @@ def clean_df(df):
 
 def apply_model(df):
     pred = sentiment_model.transform(df)
-    pred.show()
+    # pred.show()
     extract_data(pred)
 
 
@@ -77,12 +77,7 @@ def refresh_file(path):
         os.remove(path)
         open(path, "a").close()
 
-"""
-TEXT_FILE = "/home/nico/Nico/pyProg/projData/TextList"
-PRED_FILE = "/home/nico/Nico/pyProg/projData/PredList"
-refresh_file(TEXT_FILE)
-refresh_file(PRED_FILE)
-"""
+
 DATASET_FILE = "/home/nico/Nico/pyProg/projData/dataset"
 refresh_file(DATASET_FILE)
 
@@ -91,15 +86,3 @@ spark = SparkSession.builder.getOrCreate()
 sentiment_model = PipelineModel.load(os.path.join(MLtest.MODEL_PATH, "pipe_model"))
 
 catch_stream()
-
-"""
-QUEUE = multiprocessing.Queue()
-
-pr1 = multiprocessing.Process(target=catch_stream)
-pr1.start()
-pr2 = multiprocessing.Process(target=dashboard.run(QUEUE))
-pr2.start()
-
-pr1.join()
-pr2.join()
-"""
