@@ -7,9 +7,10 @@ from pyspark.ml.feature import HashingTF, Tokenizer, IDF, StringIndexer
 from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClassificationEvaluator
 
 from os import path
+from all_path import JSON_FILE, MODEL_PATH, INPUT_FOLDER, DATASET_FILE
 
-MODEL_PATH = "/home/nico/Nico/pyProg/Big_data_2p/TWspark/model"
-INPUT_FOLDER = "/home/nico/Nico/pyProg/projData/"
+#MODEL_PATH = "/home/nico/Nico/pyProg/Big_data_2p/TWspark/model"
+#INPUT_FOLDER = "/home/nico/Nico/pyProg/projData/"
 
 
 def create_df(df_name="training.1600000.processed.noemoticon.csv"):

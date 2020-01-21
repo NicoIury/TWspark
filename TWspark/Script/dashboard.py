@@ -10,11 +10,12 @@ from wordcloud import WordCloud
 import re
 import csv
 import numpy as np
-
+from all_path import JSON_FILE, MODEL_PATH, INPUT_FOLDER, DATASET_FILE
 
 class dashboard:
     def __init__(self):
-        self.DATASET_FILE = "/home/nico/Nico/pyProg/projData/dataset"
+        #self.DATASET_FILE = "/home/nico/Nico/pyProg/projData/dataset"
+        self.DATASET_FILE = DATASET_FILE
 
         self.gs = gridspec.GridSpec(2, 2)
         self.fig = plt.figure(figsize=(10, 10))
