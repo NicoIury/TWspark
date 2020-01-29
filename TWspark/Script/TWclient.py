@@ -13,7 +13,7 @@ class TWclient:
         self.Access_token = "1213382571528089600-BSEAEcCeWi91Ig5CJnPvd7wTaUanyr"
         self.Access_token_secret = "AmcnpoSL5zAA7fcVD6zDUHKDbeZ96stVzC6HgmAmxdnCh"
 
-        self.JSON_FILE = "/home/nico/Nico/pyProg/projData/data.json"
+        self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
 
         self.q, mode = self.get_input()
 

@@ -1,4 +1,5 @@
 from pyspark.sql import *
+import os
 
 
 def create_df(path):
@@ -7,4 +8,4 @@ def create_df(path):
     df.show()
 
 if __name__ == "__main__":
-    create_df("/home/nico/Nico/pyProg/projData/data.json")
+    create_df(os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json"))

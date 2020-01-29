@@ -8,8 +8,9 @@ from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClass
 
 from os import path
 
-MODEL_PATH = "/home/nico/Nico/pyProg/Big_data_2p/TWspark/model"
-INPUT_FOLDER = "/home/nico/Nico/pyProg/projData/"
+ROOT_DIR = path.dirname(path.dirname(__file__))
+MODEL_PATH = path.join(ROOT_DIR, "model")
+INPUT_FOLDER = path.join(ROOT_DIR, "projData")
 
 
 def create_df(df_name="training.1600000.processed.noemoticon.csv"):
