@@ -13,7 +13,7 @@ import numpy as np
 import os
 
 
-class dashboard:
+class Dashboard:
     def __init__(self):
         self.DATASET_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "dataset")
 
@@ -25,6 +25,7 @@ class dashboard:
         self.ax3 = plt.subplot(self.gs[1, :])
 
     def update(self, i):
+        # add check on empty csv
         """chart update section"""
         self.pie_chart()
 
@@ -115,7 +116,7 @@ class dashboard:
 
 
 def run():
-    foo = dashboard()
+    foo = Dashboard()
     foo.animate()
     plt.show()
 
