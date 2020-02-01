@@ -12,8 +12,6 @@ import MLtest
 import os
 import csv
 
-from all_path import JSON_FILE, MODEL_PATH, INPUT_FOLDER, DATASET_FILE
-
 
 def catch_stream():
     ssc = StreamingContext(spark.sparkContext, 10)
@@ -79,7 +77,8 @@ def refresh_file(path):
         os.remove(path)
         open(path, "a").close()
 
-#DATASET_FILE = "/home/nico/Nico/pyProg/projData/dataset"
+
+DATASET_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "dataset")
 refresh_file(DATASET_FILE)
 
 SCHEMA = StructType([StructField("text", StringType(), True)])

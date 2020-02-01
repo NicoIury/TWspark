@@ -4,8 +4,7 @@ import time
 import socket
 import string
 import os
-import Spark_DF
-from all_path import JSON_FILE, MODEL_PATH, INPUT_FOLDER, DATASET_FILE, GENERATED_DF
+
 
 class TWclient:
     def __init__(self):
@@ -14,8 +13,7 @@ class TWclient:
         self.Access_token = "1213382571528089600-BSEAEcCeWi91Ig5CJnPvd7wTaUanyr"
         self.Access_token_secret = "AmcnpoSL5zAA7fcVD6zDUHKDbeZ96stVzC6HgmAmxdnCh"
 
-        #self.JSON_FILE = "/home/nico/Nico/pyProg/projData/data.json"
-        self.JSON_FILE = JSON_FILE
+        self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
 
         self.q, mode = self.get_input()
 
@@ -83,9 +81,8 @@ class TWclient:
                 time.sleep(10)
 
         self.build_json()
+
         print("[+] data saved in: " + self.JSON_FILE)
-        df=Spark_DF.DF.create_df(JSON_FILE)     #creo dataframe spark leggendo il file json
-        Spark_DF.DF.save_df(GENERATED_DF,df)    #salvo il dataframe ottenuto
 
     def build_json(self):
         first = 0
