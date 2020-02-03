@@ -5,6 +5,9 @@ from pyspark.ml import PipelineModel
 import MLtest
 import os
 from tkinter import *
+import numpy as np
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
 
 
 class HistoricalApp:
@@ -74,10 +77,51 @@ class HistoricalApp:
         for row in tmp_df.collect():
             if row.prediction > 0.0:  # positive case
                 pos_dict[row.time.strftime("%d-%b-%Y")] += 1
+                #print(pos_dict)
             if row.prediction < 1.0:  # negative case
                 neg_dict[row.time.strftime("%d-%b-%Y")] += 1
-
+                #print(neg_dict)
         # plotting neg_dict e pos_dict here
+        print(f"selected hashtag: {ht}")
+        self.week_histogram(pos_dict,neg_dict,ht) #creazione del grafico dopo aver selezionato l'hashtag
+
+    def week_histogram(self,pos_dict,neg_dict,hashtag):
+        print(f"Valori da plottare:\nPositivi: {pos_dict.values()}\nNegativi: {neg_dict.values()}")
+        labels = pos_dict.keys()
+        # men_means=pos_dict.values()
+        # women_means=neg_dict.values()
+
+        x = np.arange(len(labels))  # posizione dei livelli
+        width = 0.35  # spessore delle barre
+
+        fig, ax = plt.subplots()
+        rects1 = ax.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
+        rects2 = ax.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
+
+        # Add some text for labels, title and custom x-axis tick labels, etc.
+        ax.set_ylabel('Sentiment')  #titolo asse Y
+        ax.set_title(hashtag)   #come titolo, l'hashtag selezionato
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels,rotation=40 )
+        ax.legend()
+
+        def autolabel(rects):
+            """Attach a text label above each bar in *rects*, displaying its height."""
+            for rect in rects:
+                height = rect.get_height()
+                ax.annotate('{}'.format(height),
+                            xy=(rect.get_x() + rect.get_width() / 2, height),
+                            xytext=(0, 3),  # 3 points vertical offset
+                            textcoords="offset points",
+                            ha='center', va='bottom')
+
+        autolabel(rects1)
+        autolabel(rects2)
+
+        fig.tight_layout()
+        ax.invert_xaxis() #ordine cronologico
+
+        plt.show()
 
 
 def main():
