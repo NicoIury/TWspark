@@ -14,6 +14,7 @@ class TWclient:
         self.Access_token_secret = "AmcnpoSL5zAA7fcVD6zDUHKDbeZ96stVzC6HgmAmxdnCh"
 
         self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
+        self.old_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "old")
 
         self.q, mode = self.get_input()
 
@@ -86,17 +87,13 @@ class TWclient:
         print("[+] data saved in: " + self.JSON_FILE)
 
     def refresh_json(self):
-        while 1:
-            choice = input("[.] Do u want to clean old data? Y/N")
-            if choice == "Y":
-                if os.path.exists(self.JSON_FILE):
-                    os.remove(self.JSON_FILE)
-                    print("[!] Deleted old data")
-                break
-            if choice == "N":
-                break
-            else:
-                print("[-] invalid input")
+        if not os.path.exists(self.old_data_path):
+            os.mkdir(self.old_data_path)
+
+        if os.path.exists(self.JSON_FILE):
+            os.rename(self.JSON_FILE, os.path.join(self.old_data_path,
+                                                   "oldData" + time.strftime("%Y%m%d-%H%M%S")))
+            print("[!] Cleaned old data")
 
     def build_json(self):
         first = 0
