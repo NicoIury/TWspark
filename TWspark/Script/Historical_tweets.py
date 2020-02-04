@@ -6,6 +6,9 @@ import MLtest
 import os
 from tkinter import *
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 class HistoricalApp:
     def __init__(self, root):
@@ -16,7 +19,7 @@ class HistoricalApp:
         self.df = self.df.withColumn("hashtag_list", udf_to_string(f.col("hashtag_list")))
         self.hashtagList = []
 
-        # self.clean()
+        self.clean()
 
         self.apply_model()
         self.df = self.df.select("hashtag_list", "time", "prediction")
@@ -32,7 +35,11 @@ class HistoricalApp:
         self.draw()
 
     def clean(self):
-        pass
+        regex = r"(http.\S+)|(@[^\s]+)"
+        self.df = self.df.withColumn("text", f.lower(f.col("text")))
+        self.df = self.df.withColumn("text", f.regexp_replace(f.col("text"), regex, ""))
+        self.df = self.df.filter(self.df.text.isNotNull() & (self.df.text != ""))
+        self.df.na.drop()
 
     def apply_model(self):
         sentiment_model = PipelineModel.load(os.path.join(MLtest.MODEL_PATH, "pipe_model"))
@@ -77,7 +84,48 @@ class HistoricalApp:
             if row.prediction < 1.0:  # negative case
                 neg_dict[row.time.strftime("%d-%b-%Y")] += 1
 
-        # plotting neg_dict e pos_dict here
+        print("selected hashtag: {}".format(ht))
+        print(neg_dict, "\n\n", pos_dict)
+        week_histogram(pos_dict, neg_dict, ht)  # creazione del grafico dopo aver selezionato l'hashtag
+
+
+def week_histogram(pos_dict, neg_dict, hashtag):
+
+    def autolabel(rects):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('{}'.format(height),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+    print("Valori da plottare:\nPositivi: {}\nNegativi: {}".format(pos_dict.values(), neg_dict.values()))
+    labels = pos_dict.keys()
+    # men_means=pos_dict.values()
+    # women_means=neg_dict.values()
+
+    x = np.arange(len(labels))  # posizione dei livelli
+    width = 0.35  # spessore delle barre
+
+    fig, ax = plt.subplots()
+    rects1 = ax.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
+    rects2 = ax.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel('Sentiment')  #titolo asse Y
+    ax.set_title(hashtag)   #come titolo, l'hashtag selezionato
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=40)
+    ax.legend()
+
+    autolabel(rects1)
+    autolabel(rects2)
+
+    fig.tight_layout()
+
+    plt.show()
 
 
 def main():

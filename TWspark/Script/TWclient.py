@@ -63,7 +63,8 @@ class TWclient:
             self.myStream.disconnect()
             print("[+] disconnected.")
 
-    def get_search(self, max_tweets=1000):
+    def get_search(self, max_tweets=10000):
+        self.refresh_json()
         print("[*] starting tweets' search...")
         self.clean_json()
 
@@ -83,6 +84,19 @@ class TWclient:
         self.build_json()
 
         print("[+] data saved in: " + self.JSON_FILE)
+
+    def refresh_json(self):
+        while 1:
+            choice = input("[.] Do u want to clean old data? Y/N")
+            if choice == "Y":
+                if os.path.exists(self.JSON_FILE):
+                    os.remove(self.JSON_FILE)
+                    print("[!] Deleted old data")
+                break
+            if choice == "N":
+                break
+            else:
+                print("[-] invalid input")
 
     def build_json(self):
         first = 0

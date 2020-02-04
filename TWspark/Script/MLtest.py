@@ -54,11 +54,11 @@ def model_gen():
     # map target 0 (neg) to label 0.0, and target 4 (pos) to label 1.0
     target_to_label = StringIndexer(inputCol="target", outputCol="label")
 
-    # lr = LogisticRegression(featuresCol="features", labelCol="label",  maxIter=100)
-    nb = NaiveBayes(smoothing=1.0, modelType="multinomial")
+    lr = LogisticRegression(featuresCol="features", labelCol="label",  maxIter=100)
+    # nb = NaiveBayes(smoothing=1.0, modelType="multinomial")
 
     """pipeline and model"""
-    pipeline = Pipeline(stages=[tokenizer, hashing, idf, target_to_label, nb])
+    pipeline = Pipeline(stages=[tokenizer, hashing, idf, target_to_label, lr])
     model = pipeline.fit(training_df)
 
     print("[+] pipeline model has been generated")

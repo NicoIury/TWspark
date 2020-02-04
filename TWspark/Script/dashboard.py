@@ -25,16 +25,19 @@ class Dashboard:
         self.ax3 = plt.subplot(self.gs[1, :])
 
     def update(self, i):
-        # add check on empty csv
         """chart update section"""
-        self.pie_chart()
+        try:
+            self.pie_chart()
 
-        self.get_hashtag()
-        self.get_popular_hashtag()
+            self.get_hashtag()
+            self.get_popular_hashtag()
 
-        self.show_wordcloud()
+            self.show_wordcloud()
 
-        self.show_histogram()
+            self.show_histogram()
+
+        except Exception as e:
+            print(e)
 
     def animate(self):
         self.a = anim.FuncAnimation(self.fig, self.update, interval=100, repeat=False)
