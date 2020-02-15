@@ -83,9 +83,30 @@ class HistoricalApp:
                 #print(neg_dict)
         # plotting neg_dict e pos_dict here
         print(f"selected hashtag: {ht}")
-        self.week_histogram(pos_dict,neg_dict,ht) #creazione del grafico dopo aver selezionato l'hashtag
+        #self.week_histogram(pos_dict,neg_dict,ht) #creazione del grafico dopo aver selezionato l'hashtag
+        self.simple_graph(pos_dict,neg_dict,ht)
 
-    def week_histogram(self,pos_dict,neg_dict,hashtag):
+    def simple_graph(self,pos_dict,neg_dict,hashtag):
+
+        # Data for plotting
+        labels = pos_dict.keys()
+        x_len = np.arange(len(labels))
+
+        fig, ax = plt.subplots()
+        ax.plot(x_len, pos_dict.values(), label="Positive", color='y')
+        ax.plot(x_len, neg_dict.values(), label="Negative", color='g')
+
+        ax.set(xlabel='Day', ylabel='sentiment', title=hashtag)
+
+        ax.set_xticks(x_len)
+        ax.set_xticklabels( labels, rotation=35)
+        ax.grid()
+        ax.legend()
+
+        #fig.savefig("test.png")
+        plt.show()
+
+    def week_histogram(self,pos_dict,neg_dict,hashtag): #ISTOGRAMMA (NON PIÙ USATO)
         print(f"Valori da plottare:\nPositivi: {pos_dict.values()}\nNegativi: {neg_dict.values()}")
         labels = pos_dict.keys()
         # men_means=pos_dict.values()
