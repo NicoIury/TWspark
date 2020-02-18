@@ -91,39 +91,19 @@ class HistoricalApp:
 
 def week_histogram(pos_dict, neg_dict, hashtag):
 
-    def autolabel(rects):
-        """Attach a text label above each bar in *rects*, displaying its height."""
-        for rect in rects:
-            height = rect.get_height()
-            ax.annotate('{}'.format(height),
-                        xy=(rect.get_x() + rect.get_width() / 2, height),
-                        xytext=(0, 3),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha='center', va='bottom')
-
-    print("Valori da plottare:\nPositivi: {}\nNegativi: {}".format(pos_dict.values(), neg_dict.values()))
-    labels = pos_dict.keys()
-    # men_means=pos_dict.values()
-    # women_means=neg_dict.values()
-
-    x = np.arange(len(labels))  # posizione dei livelli
-    width = 0.35  # spessore delle barre
+    print("plotting values: \nPositive: {}\nNegative: {}".format(pos_dict.values(), neg_dict.values()))
+    x = np.arange(len(pos_dict.keys()))
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
-    rects2 = ax.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Sentiment')  #titolo asse Y
-    ax.set_title(hashtag)   #come titolo, l'hashtag selezionato
+    ax.plot(x, pos_dict.values(), label="Positive", color='y')
+    ax.plot(x, neg_dict.values(), label="Negative", color='g')
+
+    ax.set(xlabel='Day', ylabel='sentiment', title=hashtag)
+
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=40)
+    ax.grid()
     ax.legend()
-
-    autolabel(rects1)
-    autolabel(rects2)
-
-    fig.tight_layout()
 
     plt.show()
 

@@ -97,8 +97,10 @@ class Dashboard:
     def show_histogram(self):
         neg_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
         pos_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
-        x = range(0, len(neg_dict.keys()))
-        x1 = [i + 0.6 for i in x]
+
+        x = np.arange(len(neg_dict.keys()))
+        width = 0.35
+
         with open(self.DATASET_FILE, "r") as raw_data:
             reader = csv.reader(raw_data, delimiter=",")
             for line in reader:
@@ -110,11 +112,16 @@ class Dashboard:
                             neg_dict[tag] += 1
 
         self.ax3.clear()
-        self.ax3.bar(x, pos_dict.values(), width=0.5, color='y', align='center')
-        self.ax3.bar(x1, neg_dict.values(), width=0.5, color='g', align='center')
+
+        self.ax3.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
+        self.ax3.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
+
         self.ax3.set_xticks(np.arange(len(neg_dict.keys())))
         self.ax3.set_xticklabels(neg_dict.keys(), rotation=90)
-        # add legenda
+
+        self.ax3.set_ylabel('Polarity value')
+        self.ax3.set_title('Hashtag Polarity')
+
         self.ax3.autoscale()
 
 

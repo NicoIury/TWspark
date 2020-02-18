@@ -64,7 +64,7 @@ class TWclient:
             self.myStream.disconnect()
             print("[+] disconnected.")
 
-    def get_search(self, max_tweets=10000):
+    def get_search(self, max_tweets=1000):
         self.refresh_json()
         print("[*] starting tweets' search...")
         self.clean_json()
