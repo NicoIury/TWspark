@@ -91,6 +91,7 @@ class TWclient:
         for tw in self.tweets:
             hashatag_list = []
             [hashatag_list.append(item["text"]) for item in tw.entities["hashtags"]]
+            # print(tw.coordinates)
             data = {
                 "text": tw.text,
                 "hashtag_list": hashatag_list,  # filter out empty list
@@ -119,7 +120,7 @@ class MyStream(tweepy.StreamListener):
 
     def on_data(self, data):
         tweet = json.loads(data)
-        # print(tweet["text"])
+        # print(tweet["coordinates"])
         tweet["text"] = clean_punct(tweet["text"])
         # print(tweet["text"])
         if tweet["text"].strip():
