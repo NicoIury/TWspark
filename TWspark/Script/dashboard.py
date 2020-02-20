@@ -13,7 +13,7 @@ import numpy as np
 import os
 
 
-class dashboard:
+class Dashboard:
     def __init__(self):
         self.DATASET_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "dataset")
 
@@ -26,14 +26,18 @@ class dashboard:
 
     def update(self, i):
         """chart update section"""
-        self.pie_chart()
+        try:
+            self.pie_chart()
 
-        self.get_hashtag()
-        self.get_popular_hashtag()
+            self.get_hashtag()
+            self.get_popular_hashtag()
 
-        self.show_wordcloud()
+            self.show_wordcloud()
 
-        self.show_histogram()
+            self.show_histogram()
+
+        except Exception as e:
+            print(e)
 
     def animate(self):
         self.a = anim.FuncAnimation(self.fig, self.update, interval=100, repeat=False)
@@ -93,8 +97,10 @@ class dashboard:
     def show_histogram(self):
         neg_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
         pos_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
-        x = range(0, len(neg_dict.keys()))
-        x1 = [i + 0.6 for i in x]
+
+        x = np.arange(len(neg_dict.keys()))
+        width = 0.35
+
         with open(self.DATASET_FILE, "r") as raw_data:
             reader = csv.reader(raw_data, delimiter=",")
             for line in reader:
@@ -106,18 +112,25 @@ class dashboard:
                             neg_dict[tag] += 1
 
         self.ax3.clear()
-        self.ax3.bar(x, pos_dict.values(), width=0.5, color='y', align='center')
-        self.ax3.bar(x1, neg_dict.values(), width=0.5, color='g', align='center')
+
+        self.ax3.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
+        self.ax3.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
+
         self.ax3.set_xticks(np.arange(len(neg_dict.keys())))
         self.ax3.set_xticklabels(neg_dict.keys(), rotation=90)
-        # add legenda
+
+        self.ax3.set_ylabel('Polarity value')
+        self.ax3.set_title('Hashtag Polarity')
+
         self.ax3.autoscale()
 
 
 def run():
-    foo = dashboard()
+    foo = Dashboard()
     foo.animate()
     plt.show()
 
 
-run()
+if __name__ == "__main__":
+    run()
+
