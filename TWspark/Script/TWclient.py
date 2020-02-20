@@ -8,7 +8,7 @@ import sys
 
 
 class TWclient:
-    def __init__(self):
+    def __init__(self, query, mode):
         self.Consumer_API_key = "smkfHwJ7ALgAkrlQIwhjJuOr7"
         self.Consumer_API_secret = "avO6B2ApFHmIPFCgQDMWZLZgYde4cIKF2LKz9P6P64x2jf5Our"
         self.Access_token = "1213382571528089600-BSEAEcCeWi91Ig5CJnPvd7wTaUanyr"
@@ -17,8 +17,10 @@ class TWclient:
         self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
         self.old_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "old")
 
-        self.q = "china virus coronavirus"
-        mode = 2
+        self.q = query.split(",")
+
+        print(self.q)
+        mode = int(mode)
 
         self.authorize()
         self.get_api()
@@ -172,8 +174,8 @@ def clean_punct(text):
     return text
 
 
-def run():
-    foo = TWclient()
+def run(argv):
+    foo = TWclient(argv[1], argv[2])
 
 
-run()
+run(sys.argv)

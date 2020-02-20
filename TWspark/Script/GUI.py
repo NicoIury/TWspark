@@ -1,5 +1,4 @@
 from tkinter import *
-import TWclient
 import os
 
 font = ("Arial Black", 10)
@@ -49,8 +48,7 @@ class GUI:
         self.lbl3 = Label(self.window, text="Inserisci almeno 1 parola")
         self.lbl3.grid(column=0, row=10)
 
-        self.btn_search = Button(self.window, text="Compute")
-        self.btn_search.bind("<Button-1>", self.callClient)
+        self.btn_search = Button(self.window, text="Compute", command=self.callClient)
 
         self.btn_search.grid(column=1, row=10)
         self.btn_search.config(state="disabled")
@@ -59,14 +57,14 @@ class GUI:
 
     def inserisci_parola(self):
         self.testo = self.txt.get()
-        print(f"testo scritto: '{self.testo}'")
+        print("testo scritto: {}".format(self.testo))
 
         self.testo2 = self.testo
         self.testo2 = self.testo2.split(' ')
         self.testo2 = list(filter(None, self.testo2))  # per ottenere una lista senza spazi
-        self.stringa = ' '.join(self.testo2)
+        self.stringa = ','.join(self.testo2)
 
-        self.lbl.config(text=f"'{self.stringa}'", font=font)
+        self.lbl.config(text="".format(self.stringa), font=font)
 
         self.compute()
 
@@ -95,7 +93,7 @@ class GUI:
 
     def callClient(self):
         path = os.path.join(os.path.dirname(__file__), "TWclient.py")
-        os.system("xterm -hold -e python3  {}".format(path))
+        os.system("xterm -hold -e python3  {} {} {}".format(path, self.stringa, self.var.get()))
 
 
 if __name__ == "__main__":
