@@ -4,6 +4,7 @@ import time
 import socket
 import string
 import os
+import sys
 
 
 class TWclient:
@@ -16,12 +17,13 @@ class TWclient:
         self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
         self.old_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "old")
 
-        self.q, mode = self.get_input()
+        self.q = "china virus coronavirus"
+        mode = 2
 
         self.authorize()
         self.get_api()
 
-        if mode == 0:
+        if mode == 2:
             self.get_RTstream()
         elif mode == 1:
             self.get_search()  # no param -> 1000 tw
@@ -33,9 +35,7 @@ class TWclient:
     def get_api(self):
         self.api = tweepy.API(self.auth)
 
-    def verify_credential(self):
-        pass
-
+    """
     def get_input(self):
         while 1:
             try:
@@ -47,6 +47,7 @@ class TWclient:
 
         Tlist = input("[.] Query term(s): ").split()
         return Tlist, mode
+    """
 
     def get_RTstream(self):
         self.streamListener = MyStream()
@@ -175,5 +176,4 @@ def run():
     foo = TWclient()
 
 
-if __name__=="__main__":
-    run()
+run()
