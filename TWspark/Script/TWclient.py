@@ -5,6 +5,7 @@ import socket
 import string
 import os
 import sys
+import threading
 
 
 class TWclient:
@@ -16,16 +17,16 @@ class TWclient:
 
         self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
         self.old_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "old")
+        self.dashboard_path = os.path.join(os.path.dirname(__file__), "dashboard.py")
 
         self.q = query.split(",")
-
-        print(self.q)
         mode = int(mode)
 
         self.authorize()
         self.get_api()
 
         if mode == 2:
+            threading.Thread(target=self.call_dashboard).start()
             self.get_RTstream()
         elif mode == 1:
             self.get_search()  # no param -> 1000 tw
@@ -66,6 +67,9 @@ class TWclient:
         finally:
             self.myStream.disconnect()
             print("[+] disconnected.")
+
+    def call_dashboard(self):
+        os.system("xterm -hold -e python3  {}".format(self.dashboard_path))
 
     def get_search(self, max_tweets=1000):
         self.refresh_json()
