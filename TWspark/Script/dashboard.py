@@ -11,6 +11,7 @@ import re
 import csv
 import numpy as np
 import os
+from collections import Counter
 
 
 class Dashboard:
@@ -111,10 +112,19 @@ class Dashboard:
                         if float(line[1]) < 1.0:  # negative
                             neg_dict[tag] += 1
 
+        new_neg_dict = {}
+        new_pos_dict = {}
+
+        dict_sum = dict(Counter(pos_dict) + Counter(neg_dict))
+
+        for k in sorted(dict_sum, key=dict_sum.get, reverse=True):
+            new_neg_dict[k] = neg_dict[k]
+            new_pos_dict[k] = pos_dict[k]
+
         self.ax3.clear()
 
-        self.ax3.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
-        self.ax3.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
+        self.ax3.bar(x - width / 2, new_pos_dict.values(), width, label='Positive', color='y')
+        self.ax3.bar(x + width / 2, new_neg_dict.values(), width, label='Negative', color='g')
 
         self.ax3.set_xticks(np.arange(len(neg_dict.keys())))
         self.ax3.set_xticklabels(neg_dict.keys(), rotation=90)
@@ -133,4 +143,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
