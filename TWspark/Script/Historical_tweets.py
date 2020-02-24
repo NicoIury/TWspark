@@ -2,7 +2,7 @@ from pyspark.sql import *
 import pyspark.sql.functions as f
 from pyspark.ml import PipelineModel
 
-import MLtest
+import MLmodel
 import os
 from tkinter import *
 
@@ -42,7 +42,7 @@ class HistoricalApp:
         self.df.na.drop()
 
     def apply_model(self):
-        sentiment_model = PipelineModel.load(os.path.join(MLtest.MODEL_PATH, "pipe_model"))
+        sentiment_model = PipelineModel.load(os.path.join(MLmodel.MODEL_PATH, "pipe_model"))
         self.df = sentiment_model.transform(self.df)
 
     def extract_hashtag(self):

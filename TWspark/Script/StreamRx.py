@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 
 from pyspark.ml import PipelineModel
 
-import MLtest
+import MLmodel
 
 import os
 import csv
@@ -83,6 +83,6 @@ refresh_file(DATASET_FILE)
 
 SCHEMA = StructType([StructField("text", StringType(), True)])
 spark = SparkSession.builder.getOrCreate()
-sentiment_model = PipelineModel.load(os.path.join(MLtest.MODEL_PATH, "pipe_model"))
+sentiment_model = PipelineModel.load(os.path.join(MLmodel.MODEL_PATH, "pipe_model"))
 
 catch_stream()

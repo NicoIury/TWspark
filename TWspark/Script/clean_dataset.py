@@ -1,6 +1,6 @@
 import pyspark.sql.functions as f
 
-import MLtest
+import MLmodel
 
 from os import path
 
@@ -13,10 +13,10 @@ def clean_df(df):
     df = df.filter(df.text.isNotNull() & (df.text != ""))
     df.na.drop()
 
-    df.write.csv(path.join(MLtest.INPUT_FOLDER, "cleaned_df.csv"), mode="overwrite")
+    df.write.csv(path.join(MLmodel.INPUT_FOLDER, "cleaned_df.csv"), mode="overwrite")
     print("[+] cleaning complete.")
 
 
 if __name__ == "__main__":
-    df = MLtest.create_df()
+    df = MLmodel.create_df()
     clean_df(df)
