@@ -1,0 +1,30 @@
+
+
+*client:
+	def get_RTstream (55->69)
+	class MyStream (134 -> 155)
+
+	def get_search (74 -> 94)
+	def build_json (105 -> 127)
+
+*GUI
+	92 -> 97
+
+*StreamRx
+	def catch_stream (16 -> 27)
+	def to_df (30 -> 34)
+	def apply_model + extract_data (45 -> 64)
+
+*MLmodel
+	def model_gen (35 ->  74)
+	def save_model + eval_model (87 -> 96)
+	+ clean_dataset.py -> spiegare che fa più o meno ma più meno che più più pew pew
+
+*dashboard
+	def update + animate (28 -> 44)
+	def get_popular_hashtag (55 -> 61)
+
+*historical_tweets
+	def __init__ (13 -> 35)
+	 + def get_popular_hashtag (54 -> 64)
+	def compute (69 -> 89)

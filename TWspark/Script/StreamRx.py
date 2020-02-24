@@ -27,14 +27,6 @@ def catch_stream():
     ssc.awaitTermination()
 
 
-def test(lines):
-    """wcount in tweets"""
-    words = lines.flatMap(lambda line: line.split(" "))
-    pairs = words.map(lambda word: (word, 1))
-    count = pairs.reduceByKey(lambda x, y: x+y)
-    count.pprint()
-
-
 def to_df(rdd):
     df = spark.createDataFrame(rdd.map(lambda x: (x, )), schema=SCHEMA)
     # df.show()
