@@ -5,8 +5,8 @@ from pyspark.ml import PipelineModel
 import MLtest
 import os
 from tkinter import *
+
 import numpy as np
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
 
@@ -19,7 +19,7 @@ class HistoricalApp:
         self.df = self.df.withColumn("hashtag_list", udf_to_string(f.col("hashtag_list")))
         self.hashtagList = []
 
-        # self.clean()
+        self.clean()
 
         self.apply_model()
         self.df = self.df.select("hashtag_list", "time", "prediction")
@@ -35,7 +35,11 @@ class HistoricalApp:
         self.draw()
 
     def clean(self):
-        pass
+        regex = r"(http.\S+)|(@[^\s]+)"
+        self.df = self.df.withColumn("text", f.lower(f.col("text")))
+        self.df = self.df.withColumn("text", f.regexp_replace(f.col("text"), regex, ""))
+        self.df = self.df.filter(self.df.text.isNotNull() & (self.df.text != ""))
+        self.df.na.drop()
 
     def apply_model(self):
         sentiment_model = PipelineModel.load(os.path.join(MLtest.MODEL_PATH, "pipe_model"))
@@ -77,79 +81,38 @@ class HistoricalApp:
         for row in tmp_df.collect():
             if row.prediction > 0.0:  # positive case
                 pos_dict[row.time.strftime("%d-%b-%Y")] += 1
-                #print(pos_dict)
             if row.prediction < 1.0:  # negative case
                 neg_dict[row.time.strftime("%d-%b-%Y")] += 1
-                #print(neg_dict)
-        # plotting neg_dict e pos_dict here
-        print(f"selected hashtag: {ht}")
-        #self.week_histogram(pos_dict,neg_dict,ht) #creazione del grafico dopo aver selezionato l'hashtag
-        self.simple_graph(pos_dict,neg_dict,ht)
 
-    def simple_graph(self,pos_dict,neg_dict,hashtag):
+        print("selected hashtag: {}".format(ht))
+        print(neg_dict, "\n\n", pos_dict)
+        week_histogram(pos_dict, neg_dict, ht)  # creazione del grafico dopo aver selezionato l'hashtag
 
-        # Data for plotting
-        labels = pos_dict.keys()
-        x_len = np.arange(len(labels))
 
-        fig, ax = plt.subplots()
-        ax.plot(x_len, pos_dict.values(), label="Positive", color='y')
-        ax.plot(x_len, neg_dict.values(), label="Negative", color='g')
+def week_histogram(pos_dict, neg_dict, hashtag):
 
-        ax.set(xlabel='Day', ylabel='sentiment', title=hashtag)
+    print("plotting values: \nPositive: {}\nNegative: {}".format(pos_dict.values(), neg_dict.values()))
+    x = np.arange(len(pos_dict.keys()))
 
-        ax.set_xticks(x_len)
-        ax.set_xticklabels( labels, rotation=35)
-        ax.grid()
-        ax.legend()
+    fig, ax = plt.subplots()
 
-        #fig.savefig("test.png")
-        plt.show()
+    ax.plot(x, pos_dict.values(), label="Positive", color='y')
+    ax.plot(x, neg_dict.values(), label="Negative", color='g')
 
-    def week_histogram(self,pos_dict,neg_dict,hashtag): #ISTOGRAMMA (NON PIÙ USATO)
-        print(f"Valori da plottare:\nPositivi: {pos_dict.values()}\nNegativi: {neg_dict.values()}")
-        labels = pos_dict.keys()
-        # men_means=pos_dict.values()
-        # women_means=neg_dict.values()
+    ax.set(xlabel='Day', ylabel='sentiment', title=hashtag)
 
-        x = np.arange(len(labels))  # posizione dei livelli
-        width = 0.35  # spessore delle barre
+    ax.set_xticks(x)
+    ax.grid()
+    ax.legend()
 
-        fig, ax = plt.subplots()
-        rects1 = ax.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
-        rects2 = ax.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
-
-        # Add some text for labels, title and custom x-axis tick labels, etc.
-        ax.set_ylabel('Sentiment')  #titolo asse Y
-        ax.set_title(hashtag)   #come titolo, l'hashtag selezionato
-        ax.set_xticks(x)
-        ax.set_xticklabels(labels,rotation=40 )
-        ax.legend()
-
-        def autolabel(rects):
-            """Attach a text label above each bar in *rects*, displaying its height."""
-            for rect in rects:
-                height = rect.get_height()
-                ax.annotate('{}'.format(height),
-                            xy=(rect.get_x() + rect.get_width() / 2, height),
-                            xytext=(0, 3),  # 3 points vertical offset
-                            textcoords="offset points",
-                            ha='center', va='bottom')
-
-        autolabel(rects1)
-        autolabel(rects2)
-
-        fig.tight_layout()
-        ax.invert_xaxis() #ordine cronologico
-
-        plt.show()
+    plt.show()
 
 
 def main():
     root = Tk()
     foo = HistoricalApp(root)
     root.mainloop()
-
+#
 
 if __name__ == "__main__":
     main()

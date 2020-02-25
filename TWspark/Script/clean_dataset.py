@@ -15,7 +15,7 @@ def clean_df(df):
 
     df.write.csv(path.join(MLtest.INPUT_FOLDER, "cleaned_df.csv"), mode="overwrite")
     print("[+] cleaning complete.")
-
+#
 
 if __name__ == "__main__":
     df = MLtest.create_df()

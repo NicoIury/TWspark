@@ -11,8 +11,9 @@ import re
 import csv
 import numpy as np
 import os
+from collections import Counter
 
-
+#
 class Dashboard:
     def __init__(self):
         self.DATASET_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "dataset")
@@ -25,16 +26,19 @@ class Dashboard:
         self.ax3 = plt.subplot(self.gs[1, :])
 
     def update(self, i):
-        # add check on empty csv
         """chart update section"""
-        self.pie_chart()
+        try:
+            self.pie_chart()
 
-        self.get_hashtag()
-        self.get_popular_hashtag()
+            self.get_hashtag()
+            self.get_popular_hashtag()
 
-        self.show_wordcloud()
+            self.show_wordcloud()
 
-        self.show_histogram()
+            self.show_histogram()
+
+        except Exception as e:
+            print(e)
 
     def animate(self):
         self.a = anim.FuncAnimation(self.fig, self.update, interval=100, repeat=False)
@@ -95,9 +99,8 @@ class Dashboard:
         neg_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
         pos_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
 
-        labels = pos_dict.keys()
-        x = np.arange(len(labels))  # posizione dei livelli
-        width = 0.35  # spessore delle barre
+        x = np.arange(len(neg_dict.keys()))
+        width = 0.35
 
         with open(self.DATASET_FILE, "r") as raw_data:
             reader = csv.reader(raw_data, delimiter=",")
@@ -108,82 +111,28 @@ class Dashboard:
                             pos_dict[tag] += 1
                         if float(line[1]) < 1.0:  # negative
                             neg_dict[tag] += 1
+
+        new_neg_dict = {}
+        new_pos_dict = {}
+
+        dict_sum = dict(Counter(pos_dict) + Counter(neg_dict))
+
+        for k in sorted(dict_sum, key=dict_sum.get, reverse=True):
+            new_neg_dict[k] = neg_dict[k]
+            new_pos_dict[k] = pos_dict[k]
 
         self.ax3.clear()
 
-        fig, ax = plt.subplots()
-        rects1 = self.ax3.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
-        rects2 = self.ax3.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
-
-
-        ax.set_xticks(x)
-
-        def autolabel(rects):
-            """Attach a text label above each bar in *rects*, displaying its height."""
-            for rect in rects:
-                height = rect.get_height()
-                ax.annotate('{}'.format(height),
-                            xy=(rect.get_x() + rect.get_width() / 2, height),
-                            xytext=(0, 3),  # 3 points vertical offset
-                            textcoords="offset points",
-                            ha='center', va='bottom')
-
-        autolabel(rects1)
-        autolabel(rects2)
-
-        fig.tight_layout()
-
+        self.ax3.bar(x - width / 2, new_pos_dict.values(), width, label='Positive', color='y')
+        self.ax3.bar(x + width / 2, new_neg_dict.values(), width, label='Negative', color='g')
 
         self.ax3.set_xticks(np.arange(len(neg_dict.keys())))
         self.ax3.set_xticklabels(neg_dict.keys(), rotation=90)
-        # add legenda
+
+        self.ax3.set_ylabel('Polarity value')
+        self.ax3.set_title('Hashtag Polarity')
+
         self.ax3.autoscale()
-
-    def show_histogram_2(self):
-        neg_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
-        pos_dict = dict.fromkeys(self.popular_hashtag[:50], 0)
-
-        with open(self.DATASET_FILE, "r") as raw_data:
-            reader = csv.reader(raw_data, delimiter=",")
-            for line in reader:
-                for tag in neg_dict.keys():
-                    if tag in line[0]:
-                        if float(line[1]) > 0.0:  # positive
-                            pos_dict[tag] += 1
-                        if float(line[1]) < 1.0:  # negative
-                            neg_dict[tag] += 1
-
-        labels = pos_dict.keys()
-
-        x = np.arange(len(labels))  # the label locations
-        width = 0.35  # the width of the bars
-
-        fig, ax = plt.subplots()
-        rects1 = ax.bar(x - width / 2, pos_dict.values(), width, label='Positive', color='y')
-        rects2 = ax.bar(x + width / 2, neg_dict.values(), width, label='Negative', color='g')
-
-        # Add some text for labels, title and custom x-axis tick labels, etc.
-        ax.set_ylabel('Sentiment')
-        ax.set_title('Polarità nei giorni')
-        ax.set_xticks(x)
-        ax.set_xticklabels(labels, rotation=40)
-        ax.legend()
-
-        def autolabel(rects):
-            """Attach a text label above each bar in *rects*, displaying its height."""
-            for rect in rects:
-                height = rect.get_height()
-                ax.annotate('{}'.format(height),
-                            xy=(rect.get_x() + rect.get_width() / 2, height),
-                            xytext=(0, 3),  # 3 points vertical offset
-                            textcoords="offset points",
-                            ha='center', va='bottom')
-
-        autolabel(rects1)
-        autolabel(rects2)
-        fig.tight_layout()
-        ax.invert_xaxis()
-        plt.show()
 
 
 def run():
@@ -192,4 +141,5 @@ def run():
     plt.show()
 
 
-run()
+if __name__ == "__main__":
+    run()

@@ -1,5 +1,6 @@
 #!/bin/sh
-#Starta tutti
+#Starta tutti.
+#python -m pip install --user numpy scipy matplotlib ipython jupyter pandas sympy nose #pacchetti necessari
 echo -e "\n Starting clean_dataset.py \n ------------------\n\n"
 python3 clean_dataset.py
 echo -e "\n Starting MLtest.py \n ------------------\n\n"

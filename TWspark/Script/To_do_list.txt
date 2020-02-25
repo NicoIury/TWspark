@@ -1,0 +1,13 @@
+Nel client c'è una funzione che, chiamata, restituisce una lista dei tweet corrispondenti alla query
+Aggiungere una funzione che switchi tra il metodo in real time e quello sui tweet storici in base a un input
+
+->Aggiungere un pezzo di codice che data la lista dei tweet generi un json (come dicemmo scorsa volta)
+->La lista è self.tweets (nel client e tramite un for accedi ai singoli tweet), viene generata da get_search
+
+E infine un modulo a parte che legga il json e tramite spark generi un dataframe
+
+Poi puoi pure elaborare il dataframe e passarlo alla dashboard per fare plotting di roba
+O per lo meno io farei così
+
+Alla fine quello che hai è una lista di tweet, quello che vuoi è un dataframe
+Puoi pure fare in altri modi

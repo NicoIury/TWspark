@@ -7,7 +7,7 @@ from pyspark.ml.feature import HashingTF, Tokenizer, IDF, StringIndexer
 from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClassificationEvaluator
 
 from os import path
-
+#
 ROOT_DIR = path.dirname(path.dirname(__file__))
 MODEL_PATH = path.join(ROOT_DIR, "model")
 INPUT_FOLDER = path.join(ROOT_DIR, "projData")

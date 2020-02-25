@@ -4,23 +4,29 @@ import time
 import socket
 import string
 import os
+import sys
+import threading
 
-
+#
 class TWclient:
-    def __init__(self):
+    def __init__(self, query, mode):
         self.Consumer_API_key = "smkfHwJ7ALgAkrlQIwhjJuOr7"
         self.Consumer_API_secret = "avO6B2ApFHmIPFCgQDMWZLZgYde4cIKF2LKz9P6P64x2jf5Our"
         self.Access_token = "1213382571528089600-BSEAEcCeWi91Ig5CJnPvd7wTaUanyr"
         self.Access_token_secret = "AmcnpoSL5zAA7fcVD6zDUHKDbeZ96stVzC6HgmAmxdnCh"
 
         self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
+        self.old_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "old")
+        self.dashboard_path = os.path.join(os.path.dirname(__file__), "dashboard.py")
 
-        self.q, mode = self.get_input()
+        self.q = query.split(",")
+        mode = int(mode)
 
         self.authorize()
         self.get_api()
 
-        if mode == 0:
+        if mode == 2:
+            threading.Thread(target=self.call_dashboard).start()
             self.get_RTstream()
         elif mode == 1:
             self.get_search()  # no param -> 1000 tw
@@ -32,9 +38,7 @@ class TWclient:
     def get_api(self):
         self.api = tweepy.API(self.auth)
 
-    def verify_credential(self):
-        pass
-
+    """
     def get_input(self):
         while 1:
             try:
@@ -43,9 +47,9 @@ class TWclient:
                     break
             except ValueError:
                 print("[-] invalid argument")
-
         Tlist = input("[.] Query term(s): ").split()
         return Tlist, mode
+    """
 
     def get_RTstream(self):
         self.streamListener = MyStream()
@@ -63,7 +67,11 @@ class TWclient:
             self.myStream.disconnect()
             print("[+] disconnected.")
 
-    def get_search(self, max_tweets=1000):
+    def call_dashboard(self):
+        os.system("xterm -hold -e python3  {}".format(self.dashboard_path))
+
+    def get_search(self, max_tweets=50000):
+        self.refresh_json()
         print("[*] starting tweets' search...")
         self.clean_json()
 
@@ -84,6 +92,22 @@ class TWclient:
 
         print("[+] data saved in: " + self.JSON_FILE)
 
+
+        def Start_historical(self):
+            path = os.path.join(os.path.dirname(__file__), "Historical_tweets.py")
+            os.system("xterm -hold -e python3 {} ".format(path))
+
+        Start_historical(self)
+
+    def refresh_json(self):
+        if not os.path.exists(self.old_data_path):
+            os.mkdir(self.old_data_path)
+
+        if os.path.exists(self.JSON_FILE):
+            os.rename(self.JSON_FILE, os.path.join(self.old_data_path,
+                                                   "oldData" + time.strftime("%Y%m%d-%H%M%S")))
+            print("[!] Cleaned old data")
+
     def build_json(self):
         first = 0
         with open(self.JSON_FILE, "a") as f:
@@ -91,6 +115,7 @@ class TWclient:
         for tw in self.tweets:
             hashatag_list = []
             [hashatag_list.append(item["text"]) for item in tw.entities["hashtags"]]
+            # print(tw.coordinates)
             data = {
                 "text": tw.text,
                 "hashtag_list": hashatag_list,  # filter out empty list
@@ -119,7 +144,7 @@ class MyStream(tweepy.StreamListener):
 
     def on_data(self, data):
         tweet = json.loads(data)
-        # print(tweet["text"])
+        # print(tweet["coordinates"])
         tweet["text"] = clean_punct(tweet["text"])
         # print(tweet["text"])
         if tweet["text"].strip():
@@ -159,9 +184,8 @@ def clean_punct(text):
     return text
 
 
-def run():
-    foo = TWclient()
+def run(argv):
+    foo = TWclient(argv[1], argv[2])
 
 
-if __name__=="__main__":
-    run()
+run(sys.argv)

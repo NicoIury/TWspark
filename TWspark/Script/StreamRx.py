@@ -59,10 +59,8 @@ def apply_model(df):
 def extract_data(pred_df):
     """
     [QUEUE.put(float(pred.prediction)) for pred in pred_df.collect()]
-
     with open(PRED_FILE, "a") as f:
         [f.write(str(pred.prediction)+"\n") for pred in pred_df.collect()]
-
     with open(TEXT_FILE, "a") as g:
         [g.write(str(text.text)) for text in pred_df.collect()]
     """
@@ -76,7 +74,7 @@ def refresh_file(path):
     if os.path.exists(path):
         os.remove(path)
         open(path, "a").close()
-
+#
 
 DATASET_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "dataset")
 refresh_file(DATASET_FILE)
