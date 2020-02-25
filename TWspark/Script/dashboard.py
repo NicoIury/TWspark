@@ -1,6 +1,3 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.types import *
-
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 import matplotlib.gridspec as gridspec
