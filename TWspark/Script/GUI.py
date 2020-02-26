@@ -3,25 +3,29 @@ import os
 import threading
 
 font = ("Arial Black", 10)
-#
+
 
 class GUI:
     def __init__(self, root):
         self.window = root
         self.window.title("BD_analisi")
 
-        self.lbl = Label(self.window, text="Enter keywords:", font=font)
+        self.lbl = Label(self.window, text="insert keywords:", font=font)
         self.lbl.grid(column=0, row=0)
 
-        self.txt = Entry(self.window, width=20, bg='white')
+        self.txt = Entry(self.window, width=25, bg='white')
         self.txt.grid(column=0, row=1)
         self.txt.bind("<Return>", lambda event: self.inserisci_parola())  # send con tasto invio
 
-        self.btn = Button(self.window, text="Send", command=self.inserisci_parola, font=font)   #salva button
-        self.btn.grid(column=0, row=5)
+        self.btn = Button(self.window, text="Insert", command=self.inserisci_parola)   #salva button
+        self.btn.grid(column=0, row=2)
 
+        self.lbl = Label(self.window, text="Terms inserted: ")
+        self.lbl.grid(column=0, row=3)
+        self.show = Label(self.window, text="")
+        self.show.grid(column=0, row=4)
 
-        self.lbl = Label(self.window, text="--Select execution mode:", font=font)
+        self.lbl = Label(self.window, text="--Select search mode:", font=font)
         self.lbl.grid(column=1, row=0)
 
         self.var = IntVar()
@@ -43,7 +47,7 @@ class GUI:
         self.lbl3 = Label(self.window, text="Enter at least one word")
         self.lbl3.grid(column=0, row=10)
 
-        self.btn_search = Button(self.window, text="Compute", command=self.get_command)
+        self.btn_search = Button(self.window, text="Compute", command=self.get_command, font=font)
 
         self.btn_search.grid(column=1, row=10)
         self.btn_search.config(state="disabled")
@@ -57,7 +61,7 @@ class GUI:
         self.testo2 = list(filter(None, self.testo2))  # per ottenere una lista senza spazi
         self.stringa = ','.join(self.testo2)
 
-        self.lbl.config(text="".format(self.stringa), font=font)
+        self.show.config(text=f"{self.stringa}".format(self.stringa))
 
         self.compute()
 
