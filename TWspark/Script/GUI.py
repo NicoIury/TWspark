@@ -10,7 +10,7 @@ class GUI:
         self.window = root
         self.window.title("BD_analisi")
 
-        self.lbl = Label(self.window, text="insert keywords:", font=font)
+        self.lbl = Label(self.window, text="Insert keywords:", font=font)
         self.lbl.grid(column=0, row=0)
 
         self.txt = Entry(self.window, width=25, bg='white')
