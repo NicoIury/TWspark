@@ -15,9 +15,9 @@ class GUI:
 
         self.txt = Entry(self.window, width=25, bg='white')
         self.txt.grid(column=0, row=1)
-        self.txt.bind("<Return>", lambda event: self.inserisci_parola())  # send con tasto invio
+        self.txt.bind("<Return>", lambda event: self.insert_word())  # send con tasto invio
 
-        self.btn = Button(self.window, text="Insert", command=self.inserisci_parola)   #salva button
+        self.btn = Button(self.window, text="Insert", command=self.insert_word)   #salva button
         self.btn.grid(column=0, row=2)
 
         self.lbl = Label(self.window, text="Terms inserted: ")
@@ -52,7 +52,7 @@ class GUI:
         self.btn_search.grid(column=1, row=10)
         self.btn_search.config(state="disabled")
 
-    def inserisci_parola(self):
+    def insert_word(self):
         self.testo = self.txt.get()
         print("testo scritto: {}".format(self.testo))
 
