@@ -89,8 +89,9 @@ class GUI:
             self.lbl3.config(text="Select a search mode")
 
     def call_client(self):
+        print("Detecting system type...")
         path = os.path.join(os.path.dirname(__file__), "TWclient.py")
-        if sys.platform.startswith('win32'):
+        if sys.platform.startswith('win'):
             print("Widows system detected")
             os.system("START cmd /k py -3  {} {} {}".format(path, self.stringa, self.var.get()))    # WINDOWS
         elif sys.platform.startswith('linux'):
@@ -100,6 +101,8 @@ class GUI:
             print("Mac system detected...")
             os.system("osascript -e 'tell app \"terminale\" "
                       "to do script \"python3 {} {} {}\"'".format(path, self.stringa, self.var.get()))  # MAC OS
+        else:
+            print("Not valid system")
 
     def get_command(self):
         threading.Thread(target=self.call_client).start()
