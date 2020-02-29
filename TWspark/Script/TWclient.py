@@ -74,7 +74,6 @@ class TWclient:
     def get_search(self, max_tweets=1000):
         self.refresh_json()
         print("[*] starting tweets' search...")
-        self.clean_json()
 
         self.tweets = []
         last_id = -1
