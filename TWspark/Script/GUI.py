@@ -82,7 +82,7 @@ class GUI:
                 self.btn_search.config(state="disabled")
                 self.lbl3.config(text="Inserisci almeno 3 parole")
 
-            else:   #bottone
+            else:
                 self.btn_search.config(state="active")
                 self.lbl3.config(text="")
 

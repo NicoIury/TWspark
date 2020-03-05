@@ -58,16 +58,18 @@ class Dashboard:
             self.popular_hashtag.append(item[0])
 
     def show_wordcloud(self):
-        hashtag_as_string = ""
+        hashtag_plus_freq = {}
+        val = 100
         for word in self.popular_hashtag[:100]:
-            hashtag_as_string += word + " "
+            hashtag_plus_freq[word] = val
+            val = val - 1
 
         wc = WordCloud(
             width=1000,
             height=1000,
             max_words=200,
             scale=3
-        ).generate(hashtag_as_string)
+        ).generate_from_frequencies(hashtag_plus_freq)
         self.ax2.imshow(wc)
 
     def pie_chart(self):

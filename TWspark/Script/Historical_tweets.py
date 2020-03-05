@@ -27,7 +27,7 @@ class HistoricalApp:
         self.get_popular_hashtag()
 
         """ GUI section """
-        root.geometry("250x400")
+        root.geometry("300x400")
         self.Gen = root
         self.Gen.title("Historical_analysis")
         self.frame = Frame(self.Gen)
@@ -94,6 +94,7 @@ def week_histogram(pos_dict, neg_dict, hashtag):
     print("plotting values: \nPositive: {}\nNegative: {}".format(pos_dict.values(), neg_dict.values()))
     x = np.arange(len(pos_dict.keys()))
 
+    labels = pos_dict.keys()
     fig, ax = plt.subplots()
 
     ax.plot(x, pos_dict.values(), label="Positive", color='y')
@@ -102,9 +103,11 @@ def week_histogram(pos_dict, neg_dict, hashtag):
     ax.set(xlabel='Day', ylabel='sentiment', title=hashtag)
 
     ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=40)
     ax.grid()
     ax.legend()
 
+    ax.invert_xaxis()
     plt.show()
 
 

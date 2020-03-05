@@ -21,7 +21,6 @@ def catch_stream():
     lines = ssc.socketTextStream(host, port)
 
     lines.foreachRDD(to_df)
-    # test(lines)
 
     ssc.start()
     ssc.awaitTermination()
@@ -29,7 +28,6 @@ def catch_stream():
 
 def to_df(rdd):
     df = spark.createDataFrame(rdd.map(lambda x: (x, )), schema=SCHEMA)
-    # df.show()
     df = clean_df(df)
     apply_model(df)
 
@@ -44,20 +42,10 @@ def clean_df(df):
 
 def apply_model(df):
     pred = sentiment_model.transform(df)
-    # pred.show()
     extract_data(pred)
 
 
 def extract_data(pred_df):
-    """
-    [QUEUE.put(float(pred.prediction)) for pred in pred_df.collect()]
-
-    with open(PRED_FILE, "a") as f:
-        [f.write(str(pred.prediction)+"\n") for pred in pred_df.collect()]
-
-    with open(TEXT_FILE, "a") as g:
-        [g.write(str(text.text)) for text in pred_df.collect()]
-    """
     with open(DATASET_FILE, "a") as f:
         for row in pred_df.collect():
             wr = csv.writer(f)
