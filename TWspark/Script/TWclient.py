@@ -69,7 +69,25 @@ class TWclient:
             print("[+] disconnected.")
 
     def call_dashboard(self):
-        os.system("xterm -hold -e python3  {}".format(self.dashboard_path))
+        self.get_platform()
+
+    def get_platform(self):
+        plat = sys.platform
+        try:
+            if plat.startswith("linux"):
+                os.system("xterm -hold -e python3  {}".format(self.dashboard_path))
+            elif plat.startswith("win"):
+                os.system("START cmd /k py -3  {}".format(self.dashboard_path))  # WINDOWS
+
+            elif plat.startswith('darwin'):
+                os.system("osascript -e 'tell app \"terminale\" "
+                          "to do script \"python3 {}\"'".format(self.dashboard_path))  # MAC OS
+
+            else:
+                print("[!] Not a valid system")
+
+        except Exception as e:
+            print(e)
 
     def get_search(self, max_tweets=1000):
         self.refresh_json()
