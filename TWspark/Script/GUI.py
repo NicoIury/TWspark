@@ -58,7 +58,7 @@ class GUI:
         self.testo2 = list(filter(None, self.testo2))  # list without whitespaces
         self.stringa = ','.join(self.testo2)
 
-        self.show.config(text=f"{self.stringa}".format(self.stringa))
+        self.show.config(text="{}".format(self.stringa))
 
         self.compute()
 
@@ -86,23 +86,30 @@ class GUI:
             self.lbl3.config(text="Select a search mode")
 
     def call_client(self):
-        print("Detecting system type...")
         path = os.path.join(os.path.dirname(__file__), "TWclient.py")
-        if sys.platform.startswith('win'):
-            print("Widows system detected")
-            os.system("START cmd /k py -3  {} {} {}".format(path, self.stringa, self.var.get()))    # WINDOWS
-        elif sys.platform.startswith('linux'):
-            print("Linux system detected")
-            os.system("xterm -hold -e python3  {} {} {}".format(path, self.stringa, self.var.get()))  # LINUX
-        elif sys.platform.startswith('darwin'):
-            print("Mac system detected...")
-            os.system("osascript -e 'tell app \"terminale\" "
-                      "to do script \"python3 {} {} {}\"'".format(path, self.stringa, self.var.get()))  # MAC OS
-        else:
-            print("Not valid system")
+        plat = sys.platform
+        try:
+            if plat.startswith("linux"):
+                print("[+] Linux system detected")
+                os.system("xterm -hold -e python3  {} {} {}".format(path, self.stringa, self.var.get()))
+            elif plat.startswith("win"):
+                print("[+] Widows system detected")
+                os.system("START cmd /k py -3  {} {} {}".format(path, self.stringa, self.var.get()))  # WINDOWS
+
+            elif plat.startswith('darwin'):
+                print("[+] Mac system detected...")
+                os.system("osascript -e 'tell app \"terminale\" "
+                          "to do script \"python3 {} {} {}\"'".format(path, self.stringa, self.var.get()))  # MAC OS
+
+            else:
+                print("[!] Not a valid system")
+
+        except Exception as e:
+            print(e)
 
     def get_command(self):
         threading.Thread(target=self.call_client).start()
+
 
 if __name__ == "__main__":
     root = Tk()
