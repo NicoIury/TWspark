@@ -159,10 +159,6 @@ class MyStream(tweepy.StreamListener):
             tweet["text"] = clean_punct(tweet["text"])
             if tweet["text"].strip():
                 self.sock.send(tweet["text"].encode('utf-8'))
-        if "extended_text" in data:
-            tweet = json.loads(data)
-            print(tweet)
-
 
     """
     def on_status(self, status):
