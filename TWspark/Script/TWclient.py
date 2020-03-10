@@ -54,7 +54,7 @@ class TWclient:
 
     def get_RTstream(self):
         self.streamListener = MyStream()
-        self.myStream = tweepy.Stream(auth=self.api.auth, listener=self.streamListener)
+        self.myStream = tweepy.Stream(auth=self.api.auth, listener=self.streamListener, tweet_mode="extended")
 
         try:
             print("[*] start streaming...")
@@ -159,7 +159,7 @@ class MyStream(tweepy.StreamListener):
             tweet["text"] = clean_punct(tweet["text"])
             if tweet["text"].strip():
                 self.sock.send(tweet["text"].encode('utf-8'))
-        else:
+        if "extended_text" in data:
             tweet = json.loads(data)
             print(tweet)
 
