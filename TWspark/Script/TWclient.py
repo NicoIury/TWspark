@@ -154,13 +154,14 @@ class MyStream(tweepy.StreamListener):
         self.sock = create_connection()
 
     def on_data(self, data):
-        tweet = json.loads(data)
-        # print(tweet["coordinates"])
-        tweet["text"] = clean_punct(tweet["text"])
-        # print(tweet["text"])
-        if tweet["text"].strip():
-            self.sock.send(tweet["text"].encode('utf-8'))
-        # time.sleep(3)
+        if "text" in data:
+            tweet = json.loads(data)
+            # print(tweet["coordinates"])
+            tweet["text"] = clean_punct(tweet["text"])
+            # print(tweet["text"])
+            if tweet["text"].strip():
+                self.sock.send(tweet["text"].encode('utf-8'))
+            # time.sleep(3)
 
     """
     def on_status(self, status):
