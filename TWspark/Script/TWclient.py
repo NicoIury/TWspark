@@ -10,10 +10,10 @@ import threading
 
 class TWclient:
     def __init__(self, query, mode):
-        self.Consumer_API_key = "smkfHwJ7ALgAkrlQIwhjJuOr7"
-        self.Consumer_API_secret = "avO6B2ApFHmIPFCgQDMWZLZgYde4cIKF2LKz9P6P64x2jf5Our"
-        self.Access_token = "1213382571528089600-BSEAEcCeWi91Ig5CJnPvd7wTaUanyr"
-        self.Access_token_secret = "AmcnpoSL5zAA7fcVD6zDUHKDbeZ96stVzC6HgmAmxdnCh"
+        self.Consumer_API_key = ""
+        self.Consumer_API_secret = ""
+        self.Access_token = ""
+        self.Access_token_secret = ""
 
         self.JSON_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "data.json")
         self.old_data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "projData", "old")
